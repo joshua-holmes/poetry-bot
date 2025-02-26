@@ -2,6 +2,8 @@ import { ChangeEvent, KeyboardEvent } from "react";
 import { inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
 import { useAtom, useSetAtom } from "jotai";
 
+const ASSISTANT_ERROR_MSG = "There was an error retrieving my response :/";
+
 function Footer() {
   const [inputField, setInputField] = useAtom(inputFieldAtom);
   const [messages, setMessages] = useAtom(messagesAtom);
@@ -37,24 +39,52 @@ function Footer() {
       method: "POST",
       body: JSON.stringify({
         messages,
-        current_style: ""
+        current_style: extractCSS(),
       }),
       headers: {
         "Content-Type": "application/json",
       }
     })
     .then(resp => resp.json())
-    .then(data => handleNewClaraData(data))
-    .catch(error => console.error("Encountered a problem with making a request:", error))
+    .then(handleNewClaraData)
+    .catch(error => {
+      console.error("Encountered a problem with making a request:", error);
+      setLoading(false);
+      messages.push({
+        role: Role.ASSISTANT,
+        text: ASSISTANT_ERROR_MSG,
+      });
+      setMessages(messages);
+    });
   }
 
   const handleNewClaraData = (data: any) => {
     setLoading(false);
     messages.push({
       role: Role.ASSISTANT,
-      text: data.message_text
+      text: data.message_text ?? ASSISTANT_ERROR_MSG,
     })
-    setMessages(messages)
+    setMessages(messages);
+    if (data.error) {
+      console.error(data.error);
+    }
+  }
+
+  function extractCSS() {
+    const stylesheets = document.styleSheets;
+    let cssText = "";
+
+    Array.from(stylesheets).forEach((stylesheet) => {
+      const firstItem = stylesheet.cssRules.item(0);
+      if (firstItem && firstItem.cssText.startsWith(".fa")) {
+        return; // skip font awsome CSS
+      }
+      Array.from(stylesheet.cssRules).forEach((rule) => {
+        cssText += `${rule.cssText}\n`;
+      });
+    });
+
+    return cssText;
   }
 
   return (
