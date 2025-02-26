@@ -1,5 +1,5 @@
 use axum::{
-    http::StatusCode,
+    http::{HeaderValue, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
@@ -9,15 +9,19 @@ use schemas::ClaraRequest;
 
 mod services;
 use services::ask_clara;
+use tower_http::cors::CorsLayer;
 
 /// Selected port that the server will run on
 const PORT: u16 = 3000;
 
 #[tokio::main]
 async fn main() {
+    let cors = CorsLayer::new()
+        .allow_origin(HeaderValue::from_str("http://localhost").expect("Failed to setup CORS"));
     let app = Router::new()
         .route("/api", post(api))
-        .route("/ping", get(ping));
+        .route("/ping", get(ping))
+        .layer(cors);
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", PORT))
         .await
         .unwrap_or_else(|e| panic!("Axum failed to bind to port {}:\n{}", PORT, e));
