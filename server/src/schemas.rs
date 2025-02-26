@@ -6,15 +6,15 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ClaraRequest {
     /// Chat history, including messages from assistant and user.
-    messages: Vec<Message>,
+    pub messages: Vec<Message>,
     /// Current style of webpage, as CSS in plain text.
-    current_style: String,
+    pub current_style: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Message {
-    role: String,
-    text: String,
+    pub role: String,
+    pub text: String,
 }
 
 // RESPONSE TYPES
@@ -23,9 +23,9 @@ pub struct Message {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ClaraResponse {
     /// Message response from the LLM to the user.
-    message_text: String,
+    pub message_text: String,
     /// If the user requested a poem, a new style will be sent back as CSS, otherwise `None` will be sent.
-    new_style: Option<String>,
+    pub new_style: Option<String>,
 }
 
 // ERROR TYPES
