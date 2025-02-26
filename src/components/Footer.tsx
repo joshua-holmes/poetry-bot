@@ -1,13 +1,10 @@
-import { ChangeEvent, Dispatch, KeyboardEvent, SetStateAction, useState } from "react";
-import { Message, Role } from "../constants";
+import { ChangeEvent, KeyboardEvent } from "react";
+import { inputFieldAtom, messagesAtom, Role } from "../constants";
+import { useAtom } from "jotai";
 
-export type FooterProps = {
-  messages: Array<Message>;
-  setMessages: Dispatch<SetStateAction<Array<Message>>>;
-}
-
-function Footer({messages, setMessages}: FooterProps) {
-  const [inputField, setInputField] = useState<string>("");
+function Footer() {
+  const [inputField, setInputField] = useAtom(inputFieldAtom);
+  const [messages, setMessages] = useAtom(messagesAtom);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {

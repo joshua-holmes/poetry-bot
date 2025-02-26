@@ -1,29 +1,21 @@
-import { useState } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 import Messages from "./Messages";
-import { Message } from "../constants";
+import { modalActiveAtom } from "../constants";
 import Modal from "./Modal";
+import { useAtomValue } from "jotai";
 
 function Container() {
-  const [messages, setMessages] = useState<Array<Message>>([]);
-  const [modalActive, setModalActive] = useState<boolean>(false);
-
+  const modalActive = useAtomValue(modalActiveAtom);
   return (
     <>
       <div id="chat-container">
-        <Header setMessages={setMessages} setModalActive={setModalActive} />
-        <Messages
-          messages={messages}
-          setMessages={setMessages}
-        />
-        <Footer
-          messages={messages}
-          setMessages={setMessages}
-        />
+        <Header />
+        <Messages />
+        <Footer />
       </div>
       {
-        modalActive ? <Modal setModalActive={setModalActive}/> : ""
+        modalActive ? <Modal /> : ""
       }
     </>
   );

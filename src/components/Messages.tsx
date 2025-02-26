@@ -1,15 +1,12 @@
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import EmptyState from "./message_components/EmptyState";
 import ChatMessage from "./message_components/ChatMessage";
-import { Message } from "../constants";
+import { messagesAtom } from "../constants";
+import { useAtom } from "jotai";
 
-export type MessagesProps = {
-  messages: Array<Message>;
-  setMessages: Dispatch<SetStateAction<Array<Message>>>;
-}
-
-function Messages({messages, setMessages}: MessagesProps) {
+function Messages() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [messages, setMessages] = useAtom(messagesAtom);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,7 +21,7 @@ function Messages({messages, setMessages}: MessagesProps) {
       { messages.length === 0 ?
         <EmptyState />
         :
-        messages.map(m => <ChatMessage message={m} />)
+        messages.map((m, i) => <ChatMessage key={`message ${i}: ${m.text}`} message={m} />)
       }
       <div ref={messagesEndRef}/>
       </div>

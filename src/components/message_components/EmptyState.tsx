@@ -1,17 +1,35 @@
+import { useSetAtom } from "jotai";
+import { examplePrompts, inputFieldAtom } from "../../constants";
 
 function EmptyState() {
+  const setInputField = useSetAtom(inputFieldAtom);
+
+  const handleClick = (example: string) => {
+    const textArea = document.getElementById("message-input");
+    if (!textArea) {
+      console.error("Failed to find text area to input text:", example);
+      return;
+    }
+    textArea.textContent = example;
+    setInputField(example);
+  }
 
   return (
     <div className="empty-state">
-      <div className="empty-state-avatar">👨‍🎨</div>
-      <div className="empty-state-greeting">Good morning!</div>
+      <div className="empty-state-avatar">👩‍🎨</div>
+      <div className="empty-state-greeting">Hi, I'm Clara!</div>
       <div className="empty-state-examples">
-        <div className="example-pill">
-          Make it look like a Mario theme 🍄
-        </div>
-        <div className="example-pill">Change to dark mode 🌙</div>
-        <div className="example-pill">Make it calm and peaceful 🌿</div>
-        <div className="example-pill">Make it look like Windows 98 🖥️</div>
+        {
+          examplePrompts.map((ex, i) => (
+            <div
+              key={`empty-state example ${i}: ${ex}`}
+              className="example-pill"
+              onClick={() => handleClick(ex)}
+            >
+              {ex}
+            </div>
+          ))
+        }
       </div>
     </div>
   )

@@ -1,12 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
-import { Message } from "../constants";
+import { useSetAtom } from "jotai";
+import { messagesAtom, modalActiveAtom } from "../constants";
 
-export type HeaderProps = {
-  setMessages: Dispatch<SetStateAction<Array<Message>>>;
-  setModalActive: Dispatch<SetStateAction<boolean>>;
-}
-
-function Header({setMessages, setModalActive}: HeaderProps) {
+function Header() {
+  const setMessages = useSetAtom(messagesAtom);
+  const setModalActive = useSetAtom(modalActiveAtom);
 
   const handleNewChatClick = () => {
     setMessages([]);
@@ -17,7 +14,7 @@ function Header({setMessages, setModalActive}: HeaderProps) {
 
   return (
     <div id="chat-header">
-      Clara, the poem bot
+      Clara, the AI Poet and Artist
       <div className="header-buttons">
         <button
           id="new-chat-button"

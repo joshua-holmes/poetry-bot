@@ -1,10 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
+import { useSetAtom } from "jotai";
+import { examplePrompts, modalActiveAtom } from "../constants";
 
-export type ModalProps = {
-  setModalActive: Dispatch<SetStateAction<boolean>>;
-}
+function Modal() {
+  const setModalActive = useSetAtom(modalActiveAtom);
 
-function Modal({setModalActive}: ModalProps) {
   const handleClose = () => {
     setModalActive(false);
   }
@@ -21,9 +20,15 @@ function Modal({setModalActive}: ModalProps) {
             Clara is an AI chat bot that responds in rhymes and can generate poems! When a poem is generated, the bot will dynamically change the theme of this page to reflect the theme of the poem. Try saying:
           </p>
           <ul>
-            <li>Write a blissful poem about my cat, Charlie, frolicking in the field.</li>
-            <li>Create a dark poem about frightful dragons ruling the land.</li>
-            <li>Draft a joyful poem about a puppy and a penguin becoming friends.</li>
+            {
+              examplePrompts.map((ex, i) => 
+                <li
+                  key={`info-modal example ${i}: ${ex}`}
+                >
+                  {ex}
+                </li>
+              )
+            }
           </ul>
           <p>
             Simply describe a poem and watch AI bot, Clara, draft a masterpiece while being immersed in stylistic colors!
