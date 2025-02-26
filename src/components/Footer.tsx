@@ -1,14 +1,15 @@
 import { ChangeEvent, KeyboardEvent } from "react";
-import { inputFieldAtom, messagesAtom, Role } from "../constants";
-import { useAtom } from "jotai";
+import { inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
+import { useAtom, useSetAtom } from "jotai";
 
 function Footer() {
   const [inputField, setInputField] = useAtom(inputFieldAtom);
   const [messages, setMessages] = useAtom(messagesAtom);
+  const setLoading = useSetAtom(loadingAtom);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
-      handleSendClick();
+      handleSubmit();
     }
   };
 
@@ -20,14 +21,41 @@ function Footer() {
     }
   };
 
-  const handleSendClick = () => {
+  const handleSubmit = () => {
     const trimmedField = inputField.trim();
     if (!trimmedField) {
       return;
     }
-    setMessages([...messages, { role: Role.USER, text: trimmedField }]);
+    messages.push({ role: Role.USER, text: trimmedField });
     setInputField("");
+    setLoading(true);
+    makeRequestToClara();
   };
+
+  const makeRequestToClara = () => {
+    fetch("/api", {
+      method: "POST",
+      body: JSON.stringify({
+        messages,
+        current_style: ""
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    .then(resp => resp.json())
+    .then(data => handleNewClaraData(data))
+    .catch(error => console.error("Encountered a problem with making a request:", error))
+  }
+
+  const handleNewClaraData = (data: any) => {
+    setLoading(false);
+    messages.push({
+      role: Role.ASSISTANT,
+      text: data.message_text
+    })
+    setMessages(messages)
+  }
 
   return (
     <div id="input-container">
@@ -41,7 +69,7 @@ function Footer() {
           onChange={handleInputFieldChange}
           onKeyDown={handleKeyDown}
         ></textarea>
-        <button id="send-button" onClick={handleSendClick}>
+        <button id="send-button" onClick={handleSubmit}>
           <i className="fas fa-paper-plane"></i>
         </button>
       </div>
