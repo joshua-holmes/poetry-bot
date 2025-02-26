@@ -1,14 +1,15 @@
-import Chat from './Chat'
-import styles from "./container.module.css"; // use simple styles for demonstration purposes
+import Footer from "./Footer";
+import Header from "./Header";
+import Messages from "./Messages";
 
 function Container() {
   return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <Chat />
-      </div>
-    </main>
-  )
+    <div id="chat-container">
+      <Header />
+      <Messages />
+      <Footer />
+    </div>
+  );
 }
 
 export default Container;
