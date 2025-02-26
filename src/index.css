@@ -1,3 +1,7 @@
+#root {
+    width: 100%;
+}
+
 /* client/src/styles/style.css */
 :root {
     /* All properties from UIChanges: default values */
@@ -5,6 +9,7 @@
     --secondary-color: #ffe0b2;
     --background-color: #fff3e0;
     --text-color: #333333;
+    --text-link: #fe7c90;
     --page-bg: #fff3e0;
     --bubble-size: 1rem;
     --bubble-padding: 12px;
@@ -18,7 +23,7 @@
     --chat-container-max-width: 680px;
     --animation-speed: 0.3s;
     --transition-effect: ease-in-out;
-    --assistant-message-background: #f9fafb;
+    --assistant-message-background: #ffe0b2;
 
     /* Border properties */
     --border-width: 1px;
@@ -90,7 +95,7 @@
 }
 
 /* Body references page-bg, text-primary, etc. */
-body {
+body, #root {
     font-family: var(--font-family);
     background-color: var(--page-bg);
     color: var(--text-primary);
@@ -174,7 +179,6 @@ body {
 
 /* Modal styles */
 .modal {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -182,13 +186,8 @@ body {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    opacity: 0;
     transition: opacity var(--animation-speed) var(--transition-effect);
-}
-
-.modal.show {
     display: flex;
-    opacity: 1;
 }
 
 .modal-content {
@@ -202,9 +201,6 @@ body {
     transform: translateY(-20px);
     transition: transform var(--animation-speed) var(--transition-effect);
     border: var(--border-width) var(--border-style) var(--border-color);
-}
-
-.modal.show .modal-content {
     transform: translateY(0);
 }
 
@@ -275,10 +271,11 @@ body {
 }
 
 .creator-info a {
-    color: var(--primary-color);
+    color: var(--text-link);
     text-decoration: none;
     font-weight: 500;
     transition: opacity var(--animation-speed) var(--transition-effect);
+    margin-left: 4px;
 }
 
 .creator-info a:hover {
