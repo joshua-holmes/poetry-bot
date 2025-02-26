@@ -7,10 +7,10 @@ function Header() {
 
   const handleNewChatClick = () => {
     setMessages([]);
-  }
+  };
   const handleInfoClick = () => {
     setModalActive(true);
-  }
+  };
 
   return (
     <div id="chat-header">

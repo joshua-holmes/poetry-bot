@@ -10,7 +10,7 @@ function Footer() {
     if (e.key === "Enter") {
       handleSendClick();
     }
-  }
+  };
 
   const handleInputFieldChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (!!e.target.value.trim()) {
@@ -18,19 +18,16 @@ function Footer() {
     } else {
       setInputField("");
     }
-  }
+  };
 
   const handleSendClick = () => {
     const trimmedField = inputField.trim();
     if (!trimmedField) {
       return;
     }
-    setMessages([
-      ...messages,
-      {role: Role.USER, text: trimmedField},
-    ]);
+    setMessages([...messages, { role: Role.USER, text: trimmedField }]);
     setInputField("");
-  }
+  };
 
   return (
     <div id="input-container">
@@ -49,7 +46,7 @@ function Footer() {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 export default Footer;

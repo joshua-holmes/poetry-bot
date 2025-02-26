@@ -8,7 +8,7 @@ export enum Role {
 export type Message = {
   role: Role;
   text: string;
-}
+};
 
 export const examplePrompts = [
   "Write a blissful poem about my cat, Charlie, frolicking in the field 😺",

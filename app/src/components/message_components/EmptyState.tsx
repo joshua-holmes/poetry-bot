@@ -12,27 +12,21 @@ function EmptyState() {
     }
     textArea.textContent = example;
     setInputField(example);
-  }
+  };
 
   return (
     <div className="empty-state">
       <div className="empty-state-avatar">👩‍🎨</div>
       <div className="empty-state-greeting">Hi, I'm Clara!</div>
       <div className="empty-state-examples">
-        {
-          examplePrompts.map((ex, i) => (
-            <div
-              key={`empty-state example ${i}: ${ex}`}
-              className="example-pill"
-              onClick={() => handleClick(ex)}
-            >
-              {ex}
-            </div>
-          ))
-        }
+        {examplePrompts.map((ex, i) => (
+          <div key={`empty-state example ${i}: ${ex}`} className="example-pill" onClick={() => handleClick(ex)}>
+            {ex}
+          </div>
+        ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default EmptyState;

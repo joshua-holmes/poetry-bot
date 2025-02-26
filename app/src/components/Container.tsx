@@ -14,9 +14,7 @@ function Container() {
         <Messages />
         <Footer />
       </div>
-      {
-        modalActive ? <Modal /> : ""
-      }
+      {modalActive ? <Modal /> : ""}
     </>
   );
 }

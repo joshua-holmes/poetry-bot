@@ -1,11 +1,8 @@
-import "./App.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import Container from './components/Container';
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import Container from "./components/Container";
 
 function App() {
-  return (
-    <Container />
-  )
+  return <Container />;
 }
 
-export default App
+export default App;

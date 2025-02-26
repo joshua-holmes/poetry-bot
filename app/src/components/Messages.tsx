@@ -17,14 +17,14 @@ function Messages() {
   }, [messages]);
 
   return (
-      <div id="messages-container">
-      { messages.length === 0 ?
+    <div id="messages-container">
+      {messages.length === 0 ? (
         <EmptyState />
-        :
+      ) : (
         messages.map((m, i) => <ChatMessage key={`message ${i}: ${m.text}`} message={m} />)
-      }
-      <div ref={messagesEndRef}/>
-      </div>
-  )
+      )}
+      <div ref={messagesEndRef} />
+    </div>
+  );
 }
 export default Messages;
