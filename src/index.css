@@ -54,7 +54,6 @@
 
 /* You also had these from your existing code: */
 :root {
-    --page-bg: #f9fafb;
     --text-primary: var(--text-color);
     --text-secondary: #6b7280;
 
