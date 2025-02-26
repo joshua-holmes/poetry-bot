@@ -17,7 +17,6 @@ pub struct Message {
     text: String,
 }
 
-
 // RESPONSE TYPES
 //
 /// LLM's response sent back from the Axum server
@@ -29,7 +28,6 @@ pub struct ClaraResponse {
     new_style: Option<String>,
 }
 
-
 // ERROR TYPES
 //
 /// A Clara error! Yeah you're right, it's a bad name... General error type to send back to the client
@@ -38,11 +36,12 @@ pub struct Clerror {
     pub error: String,
 }
 impl<T> From<T> for Clerror
-    where T: ToString
+where
+    T: ToString,
 {
     fn from(value: T) -> Self {
         Self {
-            error: value.to_string()
+            error: value.to_string(),
         }
     }
 }

@@ -1,16 +1,14 @@
-use reqwest::Client;
 use crate::schemas::{ClaraRequest, ClaraResponse, Clerror};
+use reqwest::Client;
 
 /// Ask Clara LLM for response to inputs
 pub async fn ask_clara(clara_request: ClaraRequest) -> Result<ClaraResponse, Clerror> {
     // serialize request
-    let body = serde_json::to_string(&clara_request)
-        .map_err(Clerror::from)?;
+    let body = serde_json::to_string(&clara_request).map_err(Clerror::from)?;
     // call clara 📞
     let response = call_magic_loops(body).await?;
     // deseriealize response
-    serde_json::from_str(&response)
-        .map_err(Clerror::from)
+    serde_json::from_str(&response).map_err(Clerror::from)
 }
 
 async fn call_magic_loops(body: String) -> Result<String, Clerror> {
