@@ -4,6 +4,10 @@
 
 Clara is an AI chat bot that responds in rhymes and can generate poems! When a poem is generated, the bot will dynamically change the theme of this page to reflect the theme of the poem.
 
+![image](./images/blue.png)
+![image](./images/dark.png)
+![image](./images/brown.png)
+
 ## Try it out!
 
 ### API Key
