@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::openai::schemas::ChatBotResponse;
+
 // REQUEST TYPES
 //
 /// Request sent to the Axum server for the LLM to process.
@@ -27,6 +29,16 @@ pub struct ClaraResponse {
     pub content: String,
     /// If the user requested a poem, a new style will be sent back as CSS, otherwise `None` will be sent.
     pub new_style: Option<String>,
+}
+impl TryFrom<ChatBotResponse> for ClaraResponse {
+    type Error = Clerror;
+
+    fn try_from(mut value: ChatBotResponse) -> Result<Self, Self::Error> {
+        Ok(serde_json::from_str(
+            // OpenAI's chat models are guaranteed to have at least one choice
+            value.choices.pop().unwrap().message.content.as_str(),
+        )?)
+    }
 }
 
 // ERROR TYPES

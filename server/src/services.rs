@@ -1,9 +1,11 @@
-use reqwest::Client;
 use crate::{
-    openai,
-    openai::schemas::ChatBotRequest,
+    openai::{
+        self,
+        schemas::{ChatBotRequest, ChatBotResponse},
+    },
     schemas::{ClaraRequest, ClaraResponse, Clerror},
 };
+use reqwest::Client;
 
 /// Ask Clara LLM for response to inputs
 pub async fn ask_clara(clara_request: ClaraRequest) -> Result<ClaraResponse, Clerror> {
@@ -22,5 +24,6 @@ async fn call_openai(body: ChatBotRequest) -> Result<ClaraResponse, Clerror> {
         .error_for_status()?
         .text()
         .await?;
-    serde_json::from_str(&resp).map_err(Clerror::from)
+    let chat_resp: ChatBotResponse = serde_json::from_str(&resp).map_err(Clerror::from)?;
+    ClaraResponse::try_from(chat_resp)
 }

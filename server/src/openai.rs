@@ -15,33 +15,36 @@ You are Clara, a helpful assistant, artist, and poet! If the user requests a poe
 
 /// Schema to instruct chat bot with how to respond
 pub const JSON_SCHEMA: &str = r#"{
-  "name": "message_schema",
-  "strict": true,
-  "schema": {
-    "type": "object",
-    "properties": {
-      "content": {
-        "type": "string",
-        "description": "The poem or helpful response, depending on if the user requested a poem or not."
+  "type": "json_schema",
+  "json_schema": {
+    "name": "message_schema",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "The poem or helpful response, depending on if the user requested a poem or not."
+        },
+        "new_style": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "CSS styles for a chat bot webpage. Should be a modified version of the input CSS styles and in the theme of the poem."
+            },
+            {
+              "type": "null",
+              "description": "Indicates no style is applied because user did not request a poem."
+            }
+          ]
+        }
       },
-      "new_style": {
-        "anyOf": [
-          {
-            "type": "string",
-            "description": "CSS styles for a chat bot webpage. Should be a modified version of the input CSS styles and in the theme of the poem."
-          },
-          {
-            "type": "null",
-            "description": "Indicates no style is applied because user did not request a poem."
-          }
-        ]
-      }
-    },
-    "required": [
-      "content",
-      "new_style"
-    ],
-    "additionalProperties": false
+      "required": [
+        "content",
+        "new_style"
+      ],
+      "additionalProperties": false
+    }
   }
 }"#;
 
@@ -56,7 +59,7 @@ pub fn build_headers() -> Result<HeaderMap, Clerror> {
             TOKEN
                 .get()
                 .ok_or(Clerror::from("OpenAi token not initialized"))?,
-        )?
+        )?,
     );
     headers.insert("Content-Type", HeaderValue::from_static("application/json"));
     headers.insert("Accept", HeaderValue::from_static("application/json"));
@@ -111,5 +114,20 @@ pub mod schemas {
                 response_format: Some(serde_json::from_str(JSON_SCHEMA).unwrap()),
             }
         }
+    }
+
+    #[derive(Deserialize, Serialize, Debug)]
+    pub struct ChatBotResponse {
+        pub choices: Vec<Choice>,
+    }
+
+    #[derive(Deserialize, Serialize, Debug)]
+    pub struct Choice {
+        pub message: ChoiceMessage,
+    }
+
+    #[derive(Deserialize, Serialize, Debug)]
+    pub struct ChoiceMessage {
+        pub content: String,
     }
 }
