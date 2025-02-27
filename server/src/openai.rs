@@ -20,7 +20,7 @@ pub const JSON_SCHEMA: &str = r#"{
   "schema": {
     "type": "object",
     "properties": {
-      "message_text": {
+      "content": {
         "type": "string",
         "description": "The poem or helpful response, depending on if the user requested a poem or not."
       },
@@ -38,7 +38,7 @@ pub const JSON_SCHEMA: &str = r#"{
       }
     },
     "required": [
-      "message_text",
+      "content",
       "new_style"
     ],
     "additionalProperties": false
