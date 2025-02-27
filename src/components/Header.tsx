@@ -17,6 +17,14 @@ function Header() {
       Clara, the AI Poet and Artist
       <div className="header-buttons">
         <button
+          id="save-theme-button"
+          className="new-chat-button"
+          aria-label="Save current theme"
+        >
+          <i className="fas fa-save"></i>
+          Save Theme
+        </button>
+        <button
           id="new-chat-button"
           className="new-chat-button"
           aria-label="Start new chat"
