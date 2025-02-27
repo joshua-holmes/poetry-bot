@@ -45,3 +45,65 @@ fn load_env_file(path: &PathBuf) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_load_env_file() {
+        let path = "./.test_load_env_file.env";
+        let env_var = "TEST_LOAD_ENV_FILE";
+
+        fs::write(path, "TEST_LOAD_ENV_FILE=success").unwrap();
+        assert!(env::var(env_var).is_err());
+
+        load_env_file(&PathBuf::from(path));
+
+        assert!(env::var(env_var).is_ok());
+        assert_eq!(env::var(env_var).unwrap(), "success");
+
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn test_comments_are_ignored() {
+        let path = "./.test_comments_are_ignored.env";
+        let env_var = "TEST_COMMENTS_ARE_IGNORED";
+
+        fs::write(path, " #TEST_COMMENTS_ARE_IGNORED=success").unwrap();
+        assert!(env::var(env_var).is_err());
+
+        load_env_file(&PathBuf::from(path));
+
+        assert!(env::var(env_var).is_err());
+
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn test_quotes_are_ignored() {
+        let path = "./.test_quotes_are_ignored.env";
+        let env_var = "TEST_QUOTES_ARE_IGNORED";
+
+        fs::write(path, "TEST_QUOTES_ARE_IGNORED='success'").unwrap();
+        assert!(env::var(env_var).is_err());
+
+        load_env_file(&PathBuf::from(path));
+
+        assert_eq!(env::var(env_var).unwrap(), "success");
+
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn test_still_runs_with_junk() {
+        let path = "./.test_still_runs_with_junk.env";
+
+        fs::write(path, "some weird text").unwrap();
+
+        load_env_file(&PathBuf::from(path));
+
+        fs::remove_file(path).unwrap();
+    }
+}
