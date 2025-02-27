@@ -1,5 +1,5 @@
-use std::sync::OnceLock;
 use axum::http::{HeaderMap, HeaderValue};
+use std::sync::OnceLock;
 
 use crate::schemas::Clerror;
 
@@ -99,7 +99,12 @@ pub mod schemas {
         }
     }
     impl From<ClaraRequest> for ChatBotRequest {
-        fn from(value: ClaraRequest) -> Self {
+        fn from(mut value: ClaraRequest) -> Self {
+            // inject css into message
+            if let Some(m) = value.messages.last_mut() {
+                m.content
+                    .push_str(format!("\n```css\n{}\n```", value.current_style.as_str()).as_str());
+            }
             Self {
                 messages: value.messages,
                 model: MODEL.to_string(),
