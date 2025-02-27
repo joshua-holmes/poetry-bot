@@ -20,3 +20,4 @@ export const inputFieldAtom = atom<string>("");
 export const messagesAtom = atom<Array<Message>>([]);
 export const modalActiveAtom = atom<boolean>(false);
 export const loadingAtom = atom<boolean>(false);
+export const cssAtom = atom<string | null>(null);

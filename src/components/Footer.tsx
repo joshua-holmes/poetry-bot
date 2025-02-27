@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent } from "react";
-import { inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
+import { cssAtom, inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
 import { useAtom, useSetAtom } from "jotai";
 
 const ASSISTANT_ERROR_MSG = "There was an error retrieving my response :/";
@@ -8,6 +8,7 @@ function Footer() {
   const [inputField, setInputField] = useAtom(inputFieldAtom);
   const [messages, setMessages] = useAtom(messagesAtom);
   const setLoading = useSetAtom(loadingAtom);
+  const [css, setCss] = useAtom(cssAtom);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
@@ -39,7 +40,7 @@ function Footer() {
       method: "POST",
       body: JSON.stringify({
         messages,
-        current_style: extractCSS(),
+        current_style: css ?? extractCSS(),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -60,11 +61,17 @@ function Footer() {
 
   const handleNewClaraData = (data: any) => {
     setLoading(false);
+
     messages.push({
       role: Role.ASSISTANT,
       text: data.message_text ?? ASSISTANT_ERROR_MSG,
     })
     setMessages(messages);
+
+    if (data.new_style) {
+      setCss(data.new_style);
+    }
+
     if (data.error) {
       console.error(data.error);
     }
@@ -80,11 +87,11 @@ function Footer() {
         return; // skip font awsome CSS
       }
       Array.from(stylesheet.cssRules).forEach((rule) => {
-        cssText += `${rule.cssText}\n`;
+        cssText += `${rule.cssText} `;
       });
     });
 
-    return cssText;
+    return cssText.replace(/\n/g, " ");
   }
 
   return (
