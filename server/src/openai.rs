@@ -1,5 +1,4 @@
 use std::sync::OnceLock;
-
 use axum::http::{HeaderMap, HeaderValue};
 
 use crate::schemas::Clerror;
@@ -49,7 +48,6 @@ pub const JSON_SCHEMA: &str = r#"{
 // run-time known
 pub static TOKEN: OnceLock<String> = OnceLock::new();
 
-
 pub fn build_headers() -> Result<HeaderMap, Clerror> {
     let mut headers = HeaderMap::new();
     headers.insert(
@@ -77,10 +75,9 @@ pub mod urls {
 
 pub mod schemas {
     use super::*;
-    use serde::{Deserialize, Serialize};
     use crate::schemas::{ClaraRequest, Message};
+    use serde::{Deserialize, Serialize};
 
-    
     // There are more properties on these types, but these are the ones we need.
     // See openai's docs for more:
     // https://platform.openai.com/docs/api-reference/chat/object
@@ -107,7 +104,7 @@ pub mod schemas {
                 messages: value.messages,
                 model: MODEL.to_string(),
                 // we can unwrap here because we know parsing will work (it's static and unit tested)
-                response_format: Some(serde_json::from_str(JSON_SCHEMA).unwrap())
+                response_format: Some(serde_json::from_str(JSON_SCHEMA).unwrap()),
             }
         }
     }

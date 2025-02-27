@@ -6,15 +6,15 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-mod openai;
-mod config;
-
-mod schemas;
-use schemas::ClaraRequest;
-
-mod services;
-use services::ask_clara;
 use tower_http::cors::CorsLayer;
+
+mod config;
+mod openai;
+mod schemas;
+mod services;
+
+use schemas::ClaraRequest;
+use services::ask_clara;
 
 /// Selected port that the server will run on
 const PORT: u16 = 3000;
@@ -25,8 +25,15 @@ async fn main() {
     config::load_env_vars();
 
     // set api key and token here, so the server fails fast if they are not right
-    let openai_api_key = env::var(openai::API_KEY_ENV_VAR).unwrap_or_else(|_| panic!("Could not find API key at env var: {}", openai::API_KEY_ENV_VAR));
-    openai::TOKEN.set(format!("Bearer {}", openai_api_key)).unwrap();
+    let openai_api_key = env::var(openai::API_KEY_ENV_VAR).unwrap_or_else(|_| {
+        panic!(
+            "Could not find API key at env var: {}",
+            openai::API_KEY_ENV_VAR
+        )
+    });
+    openai::TOKEN
+        .set(format!("Bearer {}", openai_api_key))
+        .unwrap();
 
     // setup app
     let cors = CorsLayer::new()

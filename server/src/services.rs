@@ -1,5 +1,9 @@
-use crate::{openai, openai::schemas::ChatBotRequest, schemas::{ClaraRequest, ClaraResponse, Clerror}};
 use reqwest::Client;
+use crate::{
+    openai,
+    openai::schemas::ChatBotRequest,
+    schemas::{ClaraRequest, ClaraResponse, Clerror},
+};
 
 /// Ask Clara LLM for response to inputs
 pub async fn ask_clara(clara_request: ClaraRequest) -> Result<ClaraResponse, Clerror> {
