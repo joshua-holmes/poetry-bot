@@ -23,7 +23,7 @@ function Messages() {
       {messages.length === 0 ? (
         <EmptyState />
       ) : (
-        messages.map((m, i) => <ChatMessage key={`message ${i}: ${m.text}`} message={m} />)
+        messages.map((m, i) => <ChatMessage key={`message ${i}: ${m.content}`} message={m} />)
       )}
       {
         loading ? <LoadingBubblesMessage /> : ""

@@ -7,7 +7,7 @@ export enum Role {
 
 export type Message = {
   role: Role;
-  text: string;
+  content: string;
 };
 
 export const examplePrompts = [

@@ -2,7 +2,7 @@ import { ChangeEvent, KeyboardEvent } from "react";
 import { cssAtom, inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
 import { useAtom, useSetAtom } from "jotai";
 
-const ASSISTANT_ERROR_MSG = "There was an error retrieving my response :/";
+const ASSISTANT_ERROR_MSG = "There was an error retrieving my response 😞";
 
 function Footer() {
   const [inputField, setInputField] = useAtom(inputFieldAtom);
@@ -29,7 +29,7 @@ function Footer() {
     if (!trimmedField) {
       return;
     }
-    messages.push({ role: Role.USER, text: trimmedField });
+    messages.push({ role: Role.USER, content: trimmedField });
     setInputField("");
     setLoading(true);
     makeRequestToClara();
@@ -53,7 +53,7 @@ function Footer() {
       setLoading(false);
       messages.push({
         role: Role.ASSISTANT,
-        text: ASSISTANT_ERROR_MSG,
+        content: ASSISTANT_ERROR_MSG,
       });
       setMessages(messages);
     });
@@ -64,7 +64,7 @@ function Footer() {
 
     messages.push({
       role: Role.ASSISTANT,
-      text: data.message_text ?? ASSISTANT_ERROR_MSG,
+      content: data.content ?? ASSISTANT_ERROR_MSG,
     })
     setMessages(messages);
 
