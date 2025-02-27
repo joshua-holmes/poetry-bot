@@ -1,17 +1,14 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Container from "./components/Container";
-import { useAtomValue } from "jotai";
-import { cssAtom } from "./constants";
+import { useAtom } from "jotai";
+import { cssAtom, localStorageKey } from "./constants";
 import { useCallback, useEffect } from "react";
 
 function App() {
-  const css = useAtomValue(cssAtom);
+  const [css, setCss] = useAtom(cssAtom);
 
   const injectCss = useCallback((css: string) => {
-    const existingEl = document.getElementById("custom-styles");
-    if (existingEl) {
-      existingEl.remove();
-    }
+    document.getElementById("custom-styles")?.remove();
     const newEl = document.createElement("style");
     newEl.innerHTML = css;
     newEl.id = "custom-styles";
@@ -24,6 +21,13 @@ function App() {
       injectCss(css);
     }
   }, [css, injectCss]);
+
+  useEffect(() => {
+    const localCss = localStorage.getItem(localStorageKey);
+    if (localCss) {
+      setCss(localCss);
+    }
+  }, []);
 
   useEffect(() => {
     console.log("CSS FROM CLARA", css);

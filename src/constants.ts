@@ -16,8 +16,11 @@ export const examplePrompts = [
   "Draft a joyful poem about a puppy and a penguin becoming friends 🐶 ❤️ 🐧",
 ];
 
+export const localStorageKey = "claraCss";
+
 export const inputFieldAtom = atom<string>("");
 export const messagesAtom = atom<Array<Message>>([]);
 export const modalActiveAtom = atom<boolean>(false);
 export const loadingAtom = atom<boolean>(false);
 export const cssAtom = atom<string | null>(null);
+export const clearBtnAtom = atom<boolean>(!!localStorage.getItem(localStorageKey));

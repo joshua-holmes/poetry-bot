@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent } from "react";
-import { cssAtom, inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
+import { clearBtnAtom, cssAtom, inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
 import { useAtom, useSetAtom } from "jotai";
 
 const ASSISTANT_ERROR_MSG = "There was an error retrieving my response 😞";
@@ -9,6 +9,7 @@ function Footer() {
   const [messages, setMessages] = useAtom(messagesAtom);
   const setLoading = useSetAtom(loadingAtom);
   const [css, setCss] = useAtom(cssAtom);
+  const setClearBtn = useSetAtom(clearBtnAtom);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
@@ -70,6 +71,7 @@ function Footer() {
 
     if (data.new_style) {
       setCss(data.new_style);
+      setClearBtn(false); // Allow button to show as "Save Theme"
     }
 
     if (data.error) {
