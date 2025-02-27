@@ -12,16 +12,15 @@ pub async fn ask_clara(clara_request: ClaraRequest) -> Result<ClaraResponse, Cle
 }
 
 async fn call_openai(body: ChatBotRequest) -> Result<ClaraResponse, Clerror> {
-    let body = serde_json::to_string(&body).map_err(Clerror::from)?;
+    let body = serde_json::to_string(&body)?;
     let resp = Client::new()
         .post(openai::urls::CHAT)
         .headers(openai::build_headers()?)
         .body(body)
         .send()
-        .await
-        .map_err(Clerror::from)?
+        .await?
+        .error_for_status()?
         .text()
-        .await
-        .map_err(Clerror::from)?;
+        .await?;
     serde_json::from_str(&resp).map_err(Clerror::from)
 }

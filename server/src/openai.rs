@@ -56,8 +56,7 @@ pub fn build_headers() -> Result<HeaderMap, Clerror> {
             TOKEN
                 .get()
                 .ok_or(Clerror::from("OpenAi token not initialized"))?,
-        )
-        .map_err(Clerror::from)?,
+        )?
     );
     headers.insert("Content-Type", HeaderValue::from_static("application/json"));
     headers.insert("Accept", HeaderValue::from_static("application/json"));
