@@ -7,6 +7,7 @@ use axum::{
     Json, Router,
 };
 mod openai;
+mod config;
 
 mod schemas;
 use schemas::ClaraRequest;
@@ -20,10 +21,14 @@ const PORT: u16 = 3000;
 
 #[tokio::main]
 async fn main() {
+    // load env vars from .env file
+    config::load_env_vars();
+
     // set api key and token here, so the server fails fast if they are not right
     let openai_api_key = env::var(openai::API_KEY_ENV_VAR).unwrap_or_else(|_| panic!("Could not find API key at env var: {}", openai::API_KEY_ENV_VAR));
     openai::TOKEN.set(format!("Bearer {}", openai_api_key)).unwrap();
 
+    // setup app
     let cors = CorsLayer::new()
         .allow_origin(HeaderValue::from_str("http://localhost").expect("Failed to setup CORS"));
     let app = Router::new()
@@ -34,6 +39,7 @@ async fn main() {
         .await
         .unwrap_or_else(|e| panic!("Axum failed to bind to port {}:\n{}", PORT, e));
 
+    // run app!
     axum::serve(listener, app)
         .await
         .expect("Failed to start Axum server");
