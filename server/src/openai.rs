@@ -22,17 +22,17 @@ pub const JSON_SCHEMA: &str = r#"{
       "properties": {
         "content": {
           "type": "string",
-          "description": "The poem or helpful response, depending on if the user requested a poem or not. Never put CSS here."
+          "description": "The poem or helpful, rhyming response, depending on if the user requested a poem or not."
         },
         "new_style": {
           "anyOf": [
             {
               "type": "string",
-              "description": "CSS styles for a chat bot webpage. Should be a modified version of the input CSS styles and in the theme of the poem, only if a poem is reqeusted."
+              "description": "CSS styles in the theme of the poem, if a poem is reqeusted."
             },
             {
               "type": "null",
-              "description": "Indicates no style is applied because user did not request a poem."
+              "description": "For if poem was not requested"
             }
           ]
         }
