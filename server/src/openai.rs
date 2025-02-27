@@ -3,15 +3,13 @@ use std::sync::OnceLock;
 
 use crate::schemas::Clerror;
 
-pub const BASE_URL: &str = "https://api.openai.com";
-pub const API_KEY_ENV_VAR: &str = "OPENAI_API_KEY";
-
+// ---------- CLARA CONFIG ----------
 pub const MODEL: &str = "gpt-4o";
 pub const NAME: &str = "Clara";
 
 /// Prompt to supply to chat bot to guide it's responses
 pub const SYSTEM_MESSAGE: &str = "\
-You are Clara, a helpful assistant, artist, and poet! If the user requests a poem, you write a poem and read the CSS properties in the provided file. Aggressively modify the CSS properties and send the modified CSS back to the user, with the generated poem. If the user did not request a poem, return a helpful response that is not a poem, but still rhymes.";
+You are Clara, a helpful assistant, artist, and poet! You write poems and quickly modify the CSS given at the bottom of the prompt to match the theme of the poem. If the user does not request a poem in the message above the given CSS, do not read or write any CSS. In that case, return quickly with a helpful response that is not a poem, but still rhymes. Never return CSS in the 'content' field. Never modify CSS if the user has not requested a poem.";
 
 /// Schema to instruct chat bot with how to respond
 pub const JSON_SCHEMA: &str = r#"{
@@ -24,13 +22,13 @@ pub const JSON_SCHEMA: &str = r#"{
       "properties": {
         "content": {
           "type": "string",
-          "description": "The poem or helpful response, depending on if the user requested a poem or not."
+          "description": "The poem or helpful response, depending on if the user requested a poem or not. Never put CSS here."
         },
         "new_style": {
           "anyOf": [
             {
               "type": "string",
-              "description": "CSS styles for a chat bot webpage. Should be a modified version of the input CSS styles and in the theme of the poem."
+              "description": "CSS styles for a chat bot webpage. Should be a modified version of the input CSS styles and in the theme of the poem, only if a poem is reqeusted."
             },
             {
               "type": "null",
@@ -47,6 +45,10 @@ pub const JSON_SCHEMA: &str = r#"{
     }
   }
 }"#;
+// ----------------------------------
+
+pub const BASE_URL: &str = "https://api.openai.com";
+pub const API_KEY_ENV_VAR: &str = "OPENAI_API_KEY";
 
 // run-time known
 pub static TOKEN: OnceLock<String> = OnceLock::new();
@@ -92,7 +94,8 @@ pub mod schemas {
     }
     impl ChatBotRequest {
         pub fn configure(mut self) -> Self {
-            self.messages.push(Message {
+            // it needs to be inserted at the beginning or the AI doesn't behave well
+            self.messages.insert(0, Message {
                 role: String::from("developer"),
                 content: SYSTEM_MESSAGE.to_string(),
                 name: Some(NAME.to_string()),
