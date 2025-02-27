@@ -1,9 +1,13 @@
+use std::env;
+
 use axum::{
     http::{HeaderValue, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
 };
+mod openai;
+
 mod schemas;
 use schemas::ClaraRequest;
 
@@ -16,6 +20,10 @@ const PORT: u16 = 3000;
 
 #[tokio::main]
 async fn main() {
+    // set api key and token here, so the server fails fast if they are not right
+    let openai_api_key = env::var(openai::API_KEY_ENV_VAR).unwrap_or_else(|_| panic!("Could not find API key at env var: {}", openai::API_KEY_ENV_VAR));
+    openai::TOKEN.set(format!("Bearer {}", openai_api_key)).unwrap();
+
     let cors = CorsLayer::new()
         .allow_origin(HeaderValue::from_str("http://localhost").expect("Failed to setup CORS"));
     let app = Router::new()

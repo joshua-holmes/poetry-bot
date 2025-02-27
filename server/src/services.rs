@@ -1,25 +1,23 @@
-use crate::schemas::{ClaraRequest, ClaraResponse, Clerror};
+use crate::{openai, openai::schemas::ChatBotRequest, schemas::{ClaraRequest, ClaraResponse, Clerror}};
 use reqwest::Client;
 
 /// Ask Clara LLM for response to inputs
 pub async fn ask_clara(clara_request: ClaraRequest) -> Result<ClaraResponse, Clerror> {
-    // serialize request
-    let body = serde_json::to_string(&clara_request).map_err(Clerror::from)?;
     // call clara 📞
-    let response = call_magic_loops(body).await?;
-    // deseriealize response
-    serde_json::from_str(&response).map_err(Clerror::from)
+    call_openai(ChatBotRequest::from(clara_request).configure()).await
 }
 
-async fn call_magic_loops(body: String) -> Result<String, Clerror> {
-    let client = Client::new();
-    client
-        .post("https://magicloops.dev/api/loop/da2f21c8-dfea-401d-82ae-ea4d17a8367a/run")
+async fn call_openai(body: ChatBotRequest) -> Result<ClaraResponse, Clerror> {
+    let body = serde_json::to_string(&body).map_err(Clerror::from)?;
+    let resp = Client::new()
+        .post(openai::urls::CHAT)
+        .headers(openai::build_headers()?)
         .body(body)
         .send()
         .await
         .map_err(Clerror::from)?
         .text()
         .await
-        .map_err(Clerror::from)
+        .map_err(Clerror::from)?;
+    serde_json::from_str(&resp).map_err(Clerror::from)
 }

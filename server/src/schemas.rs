@@ -14,7 +14,9 @@ pub struct ClaraRequest {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Message {
     pub role: String,
-    pub text: String,
+    pub content: String,
+    /// Name of the bot or participant.
+    pub name: Option<String>,
 }
 
 // RESPONSE TYPES
@@ -23,7 +25,7 @@ pub struct Message {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ClaraResponse {
     /// Message response from the LLM to the user.
-    pub message_text: String,
+    pub content: String,
     /// If the user requested a poem, a new style will be sent back as CSS, otherwise `None` will be sent.
     pub new_style: Option<String>,
 }
