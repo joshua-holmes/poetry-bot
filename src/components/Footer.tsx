@@ -1,16 +1,14 @@
-import { ChangeEvent, KeyboardEvent, useState } from "react";
+import { ChangeEvent, KeyboardEvent } from "react";
 import { cssAtom, inputFieldAtom, loadingAtom, messagesAtom, Role } from "../constants";
 import { useAtom, useSetAtom } from "jotai";
 
-const ASSISTANT_ERROR_MSG = "There was an error retrieving my response 😞";
-const ASSISTANT_CANT_FIND_CSS = "I cannot find the page's CSS, and cannot restyle the page for you 😢 But we can still chat! 😀";
+const ASSISTANT_ERROR_MSG = "There was an error retrieving my response :/";
 
 function Footer() {
   const [inputField, setInputField] = useAtom(inputFieldAtom);
   const [messages, setMessages] = useAtom(messagesAtom);
   const setLoading = useSetAtom(loadingAtom);
   const [css, setCss] = useAtom(cssAtom);
-  const [warnedAboutCss, setWarnedAboutCss] = useState(false);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
@@ -38,12 +36,11 @@ function Footer() {
   };
 
   const makeRequestToClara = () => {
-    console.log("UHHHHHH", extractCss())
     fetch("/api", {
       method: "POST",
       body: JSON.stringify({
         messages,
-        current_style: css ?? extractCss(),
+        current_style: css ?? extractCSS(),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -80,34 +77,21 @@ function Footer() {
     }
   }
 
-  const extractCss = () => {
-    // if warned about not finding CSS files, don't try finding them again
-    if (warnedAboutCss) {
-      return "";
-    }
-
+  function extractCSS() {
     const stylesheets = document.styleSheets;
+    let cssText = "";
 
-    // find style sheet that has root rule or first stylesheet if not found
-    const selectedStylesheet = Array.from(stylesheets)
-    .find(ss => Array.from(ss.cssRules).findIndex(cr => cr.cssText.includes("root")) !== -1) ?? stylesheets.item(0);
-
-    // find rule in sheet that is for root or first rule if not found
-    const selectedRule = Array.from(selectedStylesheet?.cssRules ?? []).find(cr => cr.cssText.includes("root")) ?? selectedStylesheet?.cssRules.item(0);
-
-    // only warn once about not finding CSS
-    if (!selectedRule) {
-      if (!warnedAboutCss) {
-        setWarnedAboutCss(true);
-        setMessages([...messages, {
-          role: Role.ASSISTANT,
-          text: ASSISTANT_CANT_FIND_CSS,
-        }]);
+    Array.from(stylesheets).forEach((stylesheet) => {
+      const firstItem = stylesheet.cssRules.item(0);
+      if (firstItem && firstItem.cssText.startsWith(".fa")) {
+        return; // skip font awsome CSS
       }
-      return "";
-    }
+      Array.from(stylesheet.cssRules).forEach((rule) => {
+        cssText += `${rule.cssText} `;
+      });
+    });
 
-    return selectedRule.cssText.replace(/\n/g, " ");
+    return cssText.replace(/\n/g, " ");
   }
 
   return (
