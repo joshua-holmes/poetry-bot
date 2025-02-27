@@ -39,6 +39,12 @@ function Modal() {
                 Joshua Holmes
               </a>
             </p>
+            <p>
+              Inspired by
+              <a href="https://gen-ui.replit.app/" target="_blank" rel="noopener noreferrer">
+                gen-ui.replit.app
+              </a>
+            </p>
           </div>
         </div>
       </div>
