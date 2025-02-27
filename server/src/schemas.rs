@@ -24,7 +24,6 @@ pub struct Message {
 /// LLM's response sent back from the Axum server
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ClaraResponse {
-    /// Message response from the LLM to the user.
     pub content: String,
     /// If the user requested a poem, a new style will be sent back as CSS, otherwise `None` will be sent.
     pub new_style: Option<String>,
