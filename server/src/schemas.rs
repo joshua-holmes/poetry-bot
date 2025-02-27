@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::openai::schemas::ChatBotResponse;
 
-// REQUEST TYPES
-//
+// ---------- REQUEST TYPES ----------
+
 /// Request sent to the Axum server for the LLM to process.
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ClaraRequest {
@@ -21,8 +21,8 @@ pub struct Message {
     pub name: Option<String>,
 }
 
-// RESPONSE TYPES
-//
+// ---------- RESPONSE TYPES ----------
+
 /// LLM's response sent back from the Axum server
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ClaraResponse {
@@ -41,8 +41,8 @@ impl TryFrom<ChatBotResponse> for ClaraResponse {
     }
 }
 
-// ERROR TYPES
-//
+// ---------- ERROR TYPES ----------
+
 /// A Clara error! Yeah you're right, it's a bad name... General error type to send back to the client
 #[derive(Serialize, Debug)]
 pub struct Clerror {
