@@ -1,7 +1,7 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { createStore, Provider, useAtom, useSetAtom } from "jotai";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { createStore, Provider } from "jotai";
 import Footer from "./Footer"; // Path to your Footer component
-import { vi, test, expect, describe, Mock } from "vitest";
+import { vi, test, expect, describe } from "vitest";
 import { inputFieldAtom } from "../constants";
 
 // Mocking Jotai hooks
