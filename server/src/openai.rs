@@ -104,11 +104,14 @@ pub mod schemas {
     impl ChatBotRequest {
         pub fn configure(mut self) -> Self {
             // it needs to be inserted at the beginning or the AI doesn't behave well
-            self.messages.insert(0, Message {
-                role: String::from("developer"),
-                content: SYSTEM_MESSAGE.to_string(),
-                name: Some(NAME.to_string()),
-            });
+            self.messages.insert(
+                0,
+                Message {
+                    role: String::from("developer"),
+                    content: SYSTEM_MESSAGE.to_string(),
+                    name: Some(NAME.to_string()),
+                },
+            );
             self
         }
     }

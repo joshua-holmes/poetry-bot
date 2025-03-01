@@ -1,9 +1,12 @@
 use std::env;
 
 use axum::{
-    http::{HeaderValue, StatusCode}, response::{IntoResponse, Response}, routing::{get, post}, Json, Router
+    http::{HeaderValue, StatusCode},
+    response::{IntoResponse, Response},
+    routing::{get, post},
+    Json, Router,
 };
-use log::{info, warn};
+use log::info;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod config;
@@ -49,11 +52,15 @@ async fn main() {
 
     // only serve frontend files in release mode
     if !cfg!(debug_assertions) {
-        let cwd = env::current_dir().expect("Cannot find the current directory, which is needed to serve frontend files.");
+        let cwd = env::current_dir()
+            .expect("Cannot find the current directory, which is needed to serve frontend files.");
         let static_frontend = config::find_static_frontend(&cwd).expect("Server is trying to serve frontend files because this is running in release mode, but it cannot find `dist/` directory. Either run in non-release mode (if developing) or run `npm run build` to create build files.");
         let div = "------------------------";
         info!("Serving frontend from {:?}", static_frontend);
-        info!("Frontend is now available at:\n{}\nhttp://localhost:{}\n{}", div, PORT, div);
+        info!(
+            "Frontend is now available at:\n{}\nhttp://localhost:{}\n{}",
+            div, PORT, div
+        );
         app = app.fallback_service(ServeDir::new(static_frontend.clone()));
     }
 

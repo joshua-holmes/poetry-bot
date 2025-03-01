@@ -1,4 +1,7 @@
-use std::{env, fs, path::{Path, PathBuf}};
+use std::{
+    env, fs,
+    path::{Path, PathBuf},
+};
 
 use log::info;
 
@@ -62,7 +65,7 @@ pub fn find_static_frontend(path: &Path) -> Option<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{fs, env::temp_dir};
+    use std::{env::temp_dir, fs};
 
     #[test]
     fn test_load_env_file() {
