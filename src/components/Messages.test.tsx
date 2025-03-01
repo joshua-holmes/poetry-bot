@@ -6,16 +6,16 @@ import { vi, describe, test, expect, beforeAll } from "vitest";
 
 // Mocking the required components for testing
 vi.mock("./message_components/EmptyState", () => ({
-  default: () => <div>EmptyState</div>
+  default: () => <div>EmptyState</div>,
 }));
 vi.mock("./message_components/LoadingBubblesMessage", () => ({
-  default: () => <div data-testid="loading-bubbles">Loading...</div>
+  default: () => <div data-testid="loading-bubbles">Loading...</div>,
 }));
 
 // Mocking the atoms for testing
 const mockMessages = [
   { role: Role.USER, content: "Hello" },
-  { role: Role.ASSISTANT, content: "How are you?" }
+  { role: Role.ASSISTANT, content: "How are you?" },
 ];
 
 beforeAll(() => {
@@ -28,7 +28,7 @@ describe("Messages", () => {
     render(
       <Provider>
         <Messages />
-      </Provider>
+      </Provider>,
     );
 
     // Check that the EmptyState component is rendered
@@ -42,7 +42,7 @@ describe("Messages", () => {
     render(
       <Provider store={store}>
         <Messages />
-      </Provider>
+      </Provider>,
     );
 
     // Ensure that the ChatMessage components are rendered with correct content
@@ -58,7 +58,7 @@ describe("Messages", () => {
     render(
       <Provider store={store}>
         <Messages />
-      </Provider>
+      </Provider>,
     );
 
     // Check that the loading spinner is displayed
@@ -72,7 +72,7 @@ describe("Messages", () => {
     render(
       <Provider store={store}>
         <Messages />
-      </Provider>
+      </Provider>,
     );
 
     // Ensure that the loading spinner is not displayed
@@ -90,7 +90,7 @@ describe("Messages", () => {
     render(
       <Provider store={store}>
         <Messages />
-      </Provider>
+      </Provider>,
     );
 
     // Check that it initially scrolled

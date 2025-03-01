@@ -13,7 +13,7 @@ vi.mock("jotai", async (importOriginal) => ({
 
 // Mock fetch API
 global.fetch = vi.fn().mockResolvedValue({
-  json: vi.fn().mockResolvedValue({ content: "This is a test response." })
+  json: vi.fn().mockResolvedValue({ content: "This is a test response." }),
 });
 
 describe("Footer", () => {
@@ -21,7 +21,7 @@ describe("Footer", () => {
     render(
       <Provider>
         <Footer />
-      </Provider>
+      </Provider>,
     );
 
     // Check if the textarea and send button are rendered
@@ -36,7 +36,7 @@ describe("Footer", () => {
     render(
       <Provider store={store}>
         <Footer />
-      </Provider>
+      </Provider>,
     );
 
     const input = screen.getByPlaceholderText("Ask me to write a poem for you!") as HTMLTextAreaElement;
@@ -48,4 +48,3 @@ describe("Footer", () => {
     expect(input.value).toBe("New message");
   });
 });
-

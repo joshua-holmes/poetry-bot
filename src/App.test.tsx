@@ -18,7 +18,7 @@ describe("App", () => {
     render(
       <Provider>
         <App />
-      </Provider>
+      </Provider>,
     );
   });
 
@@ -30,11 +30,11 @@ describe("App", () => {
     render(
       <Provider store={store}>
         <App />
-      </Provider>
+      </Provider>,
     );
 
     const styleElement = document.getElementById("custom-styles");
     expect(styleElement).toBeInTheDocument();
     expect(styleElement?.innerHTML).toBe(mockCss);
   });
-})
+});

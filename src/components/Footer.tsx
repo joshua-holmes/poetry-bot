@@ -45,20 +45,20 @@ function Footer() {
       }),
       headers: {
         "Content-Type": "application/json",
-      }
+      },
     })
-    .then(resp => resp.json())
-    .then(handleNewClaraData)
-    .catch(error => {
-      console.error("Encountered a problem with making a request:", error);
-      setLoading(false);
-      messages.push({
-        role: Role.ASSISTANT,
-        content: ASSISTANT_ERROR_MSG,
+      .then((resp) => resp.json())
+      .then(handleNewClaraData)
+      .catch((error) => {
+        console.error("Encountered a problem with making a request:", error);
+        setLoading(false);
+        messages.push({
+          role: Role.ASSISTANT,
+          content: ASSISTANT_ERROR_MSG,
+        });
+        setMessages(messages);
       });
-      setMessages(messages);
-    });
-  }
+  };
 
   const handleNewClaraData = (data: any) => {
     setLoading(false);
@@ -66,7 +66,7 @@ function Footer() {
     messages.push({
       role: Role.ASSISTANT,
       content: data.content ?? ASSISTANT_ERROR_MSG,
-    })
+    });
     setMessages(messages);
 
     if (data.new_style) {
@@ -77,7 +77,7 @@ function Footer() {
     if (data.error) {
       console.error(data.error);
     }
-  }
+  };
 
   function extractCSS() {
     const stylesheets = document.styleSheets;

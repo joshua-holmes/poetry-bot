@@ -25,9 +25,7 @@ function Messages() {
       ) : (
         messages.map((m, i) => <ChatMessage key={`message ${i}: ${m.content}`} message={m} />)
       )}
-      {
-        loading ? <LoadingBubblesMessage /> : ""
-      }
+      {loading ? <LoadingBubblesMessage /> : ""}
       <div ref={messagesEndRef} />
     </div>
   );

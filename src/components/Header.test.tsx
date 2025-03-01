@@ -15,7 +15,7 @@ describe("Header", () => {
     render(
       <Provider>
         <Header />
-      </Provider>
+      </Provider>,
     );
 
     // Check if the buttons are rendered
@@ -30,7 +30,7 @@ describe("Header", () => {
     render(
       <Provider>
         <Header />
-      </Provider>
+      </Provider>,
     );
 
     // Click the 'New Chat' button
@@ -47,7 +47,7 @@ describe("Header", () => {
     render(
       <Provider>
         <Header />
-      </Provider>
+      </Provider>,
     );
 
     // Click the 'Info' button
