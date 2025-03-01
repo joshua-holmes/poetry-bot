@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
-    "dev:backend": "cargo run --manifest-path ./server/Cargo.toml",
+    "dev:backend": "RUST_LOG=info cargo run --manifest-path ./server/Cargo.toml",
     "prod": "npm run build && cargo run --release --manifest-path ./server/Cargo.toml",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
