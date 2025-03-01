@@ -11,11 +11,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: "http://localhost:3000"
-      },
-      '/ping': {
-        target: "http://localhost:3000"
+      '/': {
+        target: "http://localhost:49152"
       }
     }
   }
