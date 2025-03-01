@@ -50,6 +50,7 @@ fn load_env_file(path: &PathBuf) {
 
 /// Searches this dir and one dir up for the `dist/` directory, which contains the static frontend
 pub fn find_static_frontend(path: &Path) -> Option<PathBuf> {
+    // we look in parent dir in case the user runs this server from the `server/` dir
     for dir in [Some(path), path.parent()].into_iter().flatten() {
         if fs::exists(dir.join("dist/index.html")).unwrap_or(false) {
             return Some(dir.join("dist"));
