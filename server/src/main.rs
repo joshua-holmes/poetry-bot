@@ -47,19 +47,14 @@ async fn main() {
         .route("/ping", get(ping))
         .layer(cors);
 
-    // serve frontend, if found (though not necessary because another server could serve it instead, such as a dev server)
-    let mut serving_fe = false;
-    if let Ok(cwd) = env::current_dir() {
-        if let Some(static_frontend) = config::find_static_frontend(&cwd) {
-            let div = "------------------------";
-            info!("Serving frontend from {:?}", static_frontend);
-            info!("Frontend is now available at:\n{}\nhttp://localhost:{}\n{}", div, PORT, div);
-            app = app.fallback_service(ServeDir::new(static_frontend.clone()));
-            serving_fe = true;
-        }
-    }
-    if !serving_fe {
-        warn!("Frontend is not served from this server");
+    // only serve frontend files in release mode
+    if !cfg!(debug_assertions) {
+        let cwd = env::current_dir().expect("Cannot find the current directory, which is needed to serve frontend files.");
+        let static_frontend = config::find_static_frontend(&cwd).expect("Server is trying to serve frontend files because this is running in release mode, but it cannot find `dist/` directory. Either run in non-release mode (if developing) or run `npm run build` to create build files.");
+        let div = "------------------------";
+        info!("Serving frontend from {:?}", static_frontend);
+        info!("Frontend is now available at:\n{}\nhttp://localhost:{}\n{}", div, PORT, div);
+        app = app.fallback_service(ServeDir::new(static_frontend.clone()));
     }
 
     // run app!
