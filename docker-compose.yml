@@ -5,6 +5,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    image: poetry-bot:latest
+    image: joshuapholmes/poetry-bot:latest
     ports:
       - "${CLARA_PORT:-49152}:49152"
