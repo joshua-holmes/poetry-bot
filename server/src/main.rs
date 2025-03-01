@@ -1,12 +1,9 @@
 use std::env;
 
 use axum::{
-    http::{HeaderValue, StatusCode},
-    response::{IntoResponse, Response},
-    routing::{get, post},
-    Json, Router,
+    http::{HeaderValue, StatusCode}, response::{IntoResponse, Response}, routing::{get, post}, Json, Router
 };
-use tower_http::cors::CorsLayer;
+use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod config;
 mod openai;
@@ -38,13 +35,23 @@ async fn main() {
     // setup app
     let cors = CorsLayer::new()
         .allow_origin(HeaderValue::from_str("http://localhost").expect("Failed to setup CORS"));
-    let app = Router::new()
-        .route("/api", post(api))
-        .route("/ping", get(ping))
-        .layer(cors);
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", PORT))
         .await
         .unwrap_or_else(|e| panic!("Axum failed to bind to port {}:\n{}", PORT, e));
+    let mut app = Router::new()
+        .route("/api", post(api))
+        .route("/ping", get(ping))
+        .layer(cors);
+
+    // Serve frontend, if found (though not necessary because another server could serve it instead, such as a dev server)
+    if let Ok(cwd) = env::current_dir() {
+        if let Some(static_frontend) = config::find_static_frontend(&cwd) {
+            println!("Serving frontend at {:?}", static_frontend);
+            app = app.fallback_service(ServeDir::new(static_frontend));
+        } else {
+            println!("Not serving frontend with Axum");
+        }
+    }
 
     // run app!
     axum::serve(listener, app)

@@ -1,4 +1,4 @@
-use std::{env, fs, path::PathBuf};
+use std::{env, fs, path::{Path, PathBuf}};
 
 const TARGET: &str = ".env";
 
@@ -46,9 +46,20 @@ fn load_env_file(path: &PathBuf) {
     }
 }
 
+/// Searches this dir and one dir up for the `dist/` directory, which contains the static frontend
+pub fn find_static_frontend(path: &Path) -> Option<PathBuf> {
+    for dir in [Some(path), path.parent()].into_iter().flatten() {
+        if fs::exists(dir.join("dist/index.html")).unwrap_or(false) {
+            return Some(dir.join("dist"));
+        }
+    }
+    None
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::{fs, env::temp_dir};
 
     #[test]
     fn test_load_env_file() {
@@ -105,5 +116,78 @@ mod tests {
         load_env_file(&PathBuf::from(path));
 
         fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn test_find_static_frontend_in_current_dir() {
+        // Create a temporary directory structure for testing
+        let temp_dir = temp_dir();
+
+        // Create special dir for this test
+        let test_dir = temp_dir.join("test_find_static_frontend_in_current_dir");
+        fs::remove_dir_all(&test_dir).unwrap_or(());
+        fs::create_dir(&test_dir).unwrap();
+
+        // Create dir we are looking for
+        let dist_dir = test_dir.join("dist");
+        fs::create_dir(&dist_dir).unwrap();
+
+        // Create index.html file in dist directory
+        let index_file = dist_dir.join("index.html");
+        fs::File::create(&index_file).unwrap();
+
+        // Test finding static frontend in dist directory
+        assert_eq!(find_static_frontend(&test_dir), Some(dist_dir.clone()));
+
+        // Cleanup
+        fs::remove_dir_all(&test_dir).unwrap_or(());
+    }
+
+    #[test]
+    fn test_find_static_frontend_in_parent_dir() {
+        // Create a temporary directory structure for testing
+        let temp_dir = temp_dir();
+
+        // Create special dir for this test
+        let test_dir = temp_dir.join("test_find_static_frontend_in_parent_dir");
+        fs::remove_dir_all(&test_dir).unwrap_or(());
+        fs::create_dir(&test_dir).unwrap();
+
+        // Create dir we are looking for
+        let dist_dir = test_dir.join("dist");
+        fs::create_dir(&dist_dir).unwrap();
+
+        // Create index.html file in dist directory
+        let index_file = dist_dir.join("index.html");
+        fs::File::create(&index_file).unwrap();
+
+        // Create child dir to search from
+        let child_dir = test_dir.join("child");
+
+        // Test finding static frontend in dist directory
+        assert_eq!(find_static_frontend(&child_dir), Some(dist_dir.clone()));
+
+        // Cleanup
+        fs::remove_dir_all(&test_dir).unwrap_or(());
+    }
+
+    #[test]
+    fn test_do_not_find_static_frontend() {
+        // Create a temporary directory structure for testing
+        let temp_dir = temp_dir();
+
+        // Create special dir for this test
+        let test_dir = temp_dir.join("test_do_not_find_static_frontend");
+        fs::remove_dir_all(&test_dir).unwrap_or(());
+        fs::create_dir(&test_dir).unwrap();
+
+        // Create child dir to search from
+        let child_dir = test_dir.join("child");
+
+        // Test finding static frontend in dist directory
+        assert_eq!(find_static_frontend(&child_dir), None);
+
+        // Cleanup
+        fs::remove_dir_all(&test_dir).unwrap_or(());
     }
 }
