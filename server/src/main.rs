@@ -3,6 +3,7 @@ use std::env;
 use axum::{
     http::{HeaderValue, StatusCode}, response::{IntoResponse, Response}, routing::{get, post}, Json, Router
 };
+use log::{info, warn};
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod config;
@@ -14,10 +15,13 @@ use schemas::ClaraRequest;
 use services::ask_clara;
 
 /// Selected port that the server will run on
-const PORT: u16 = 3000;
+const PORT: u16 = 49152;
 
 #[tokio::main]
 async fn main() {
+    // initialize logging
+    env_logger::init();
+
     // load env vars from .env file
     config::load_env_vars();
 
@@ -43,14 +47,19 @@ async fn main() {
         .route("/ping", get(ping))
         .layer(cors);
 
-    // Serve frontend, if found (though not necessary because another server could serve it instead, such as a dev server)
+    // serve frontend, if found (though not necessary because another server could serve it instead, such as a dev server)
+    let mut serving_fe = false;
     if let Ok(cwd) = env::current_dir() {
         if let Some(static_frontend) = config::find_static_frontend(&cwd) {
-            println!("Serving frontend at {:?}", static_frontend);
-            app = app.fallback_service(ServeDir::new(static_frontend));
-        } else {
-            println!("Not serving frontend with Axum");
+            let div = "------------------------";
+            info!("Serving frontend from {:?}", static_frontend);
+            info!("Frontend is now available at:\n{}\nhttp://localhost:{}\n{}", div, PORT, div);
+            app = app.fallback_service(ServeDir::new(static_frontend.clone()));
+            serving_fe = true;
         }
+    }
+    if !serving_fe {
+        warn!("Frontend is not served from this server");
     }
 
     // run app!

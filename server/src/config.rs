@@ -1,5 +1,7 @@
 use std::{env, fs, path::{Path, PathBuf}};
 
+use log::info;
+
 const TARGET: &str = ".env";
 
 /// Reads through project root and server root dirs for .env files
@@ -39,7 +41,7 @@ fn load_env_file(path: &PathBuf) {
                 // Remove leading/trailing whitespace and quotes
                 let key = key.trim().to_string().replace("'", "").replace("\"", "");
                 let value = value.trim().to_string().replace("'", "").replace("\"", "");
-                println!(".env -> {}", key);
+                info!(".env -> {}", key);
                 env::set_var(key, value);
             }
         }
