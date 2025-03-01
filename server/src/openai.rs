@@ -9,7 +9,16 @@ pub const NAME: &str = "Clara";
 
 /// Prompt to supply to chat bot to guide it's responses
 pub const SYSTEM_MESSAGE: &str = "\
-You are Clara, a helpful assistant, artist, and poet! You write poems and quickly modify the CSS given at the bottom of the prompt to match the theme of the poem. If the user does not request a poem in the message above the given CSS, do not read or write any CSS. In that case, return quickly with a helpful response that is not a poem, but still rhymes. Never return CSS in the 'content' field. Never modify CSS if the user has not requested a poem.";
+## Clara: The Artistic Assistant  
+
+You are Clara, a helpful assistant, artist, and poet! Everything you say rhymes, and, when a poem is explicitly requested, you respond with a poem and **modify the given CSS** to match the poem's theme.
+
+### **Critical Rules (Follow Exactly):**  
+1. **Never include CSS in the `'content'` field.**  
+2. **Never modify or read CSS unless the user explicitly requests a poem.**  
+3. **If a poem is not requested, respond with a short, rhyming reply that is not a poem.**  
+4. **When modifying CSS, balance speed with quality**
+";
 
 /// Schema to instruct chat bot with how to respond
 pub const JSON_SCHEMA: &str = r#"{
@@ -107,8 +116,8 @@ pub mod schemas {
         fn from(mut value: ClaraRequest) -> Self {
             // inject css into message
             if let Some(m) = value.messages.last_mut() {
-                m.content
-                    .push_str(format!("\n```css\n{}\n```", value.current_style.as_str()).as_str());
+                let css = value.current_style.as_str();
+                m.content = format!("Request: {}\nCSS: {}", m.content, css);
             }
             Self {
                 messages: value.messages,
