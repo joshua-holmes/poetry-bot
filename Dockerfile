@@ -30,7 +30,10 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y \
     # installing openssl instead of this also works
     libssl-dev \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+RUN update-ca-certificates
 
 WORKDIR /app
 
