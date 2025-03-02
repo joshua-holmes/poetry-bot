@@ -1,12 +1,13 @@
-use std::env;
+use std::{env, sync::Arc};
 
 use axum::{
     http::{HeaderValue, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
-    Json, Router,
+    Extension, Json, Router,
 };
 use log::info;
+use reqwest::Client;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod config;
@@ -19,6 +20,11 @@ use services::ask_clara;
 
 /// Selected port that the server will run on
 const PORT: u16 = 49152;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub http_client: Arc<Client>,
+}
 
 #[tokio::main]
 async fn main() {
@@ -39,6 +45,9 @@ async fn main() {
         .set(format!("Bearer {}", openai_api_key))
         .unwrap();
 
+    // setup http client for outbound requests
+    let http_client = Arc::new(Client::new());
+
     // setup app
     let cors = CorsLayer::new()
         .allow_origin(HeaderValue::from_str("http://localhost").expect("Failed to setup CORS"));
@@ -48,7 +57,8 @@ async fn main() {
     let mut app = Router::new()
         .route("/api", post(api))
         .route("/ping", get(ping))
-        .layer(cors);
+        .layer(cors)
+        .layer(Extension(AppState { http_client }));
 
     // only serve frontend files in release mode
     if !cfg!(debug_assertions) {
@@ -70,8 +80,11 @@ async fn main() {
         .expect("Failed to start Axum server");
 }
 
-async fn api(Json(payload): Json<ClaraRequest>) -> (StatusCode, Response) {
-    match ask_clara(payload).await {
+async fn api(
+    Extension(state): Extension<AppState>,
+    Json(payload): Json<ClaraRequest>,
+) -> (StatusCode, Response) {
+    match ask_clara(state.http_client, payload).await {
         Ok(resp) => (StatusCode::OK, Json(resp).into_response()),
         Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, Json(err).into_response()),
     }

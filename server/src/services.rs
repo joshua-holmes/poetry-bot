@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::{
     openai::{
         self,
@@ -8,14 +10,20 @@ use crate::{
 use reqwest::Client;
 
 /// Ask Clara LLM for response to inputs
-pub async fn ask_clara(clara_request: ClaraRequest) -> Result<ClaraResponse, Clerror> {
+pub async fn ask_clara(
+    http_client: Arc<Client>,
+    clara_request: ClaraRequest,
+) -> Result<ClaraResponse, Clerror> {
     // call clara 📞
-    call_openai(ChatBotRequest::from(clara_request).configure()).await
+    call_openai(http_client, ChatBotRequest::from(clara_request).configure()).await
 }
 
-async fn call_openai(body: ChatBotRequest) -> Result<ClaraResponse, Clerror> {
+async fn call_openai(
+    http_client: Arc<Client>,
+    body: ChatBotRequest,
+) -> Result<ClaraResponse, Clerror> {
     let body = serde_json::to_string(&body)?;
-    let resp = Client::new()
+    let resp = http_client
         .post(openai::urls::CHAT)
         .headers(openai::build_headers()?)
         .body(body)
