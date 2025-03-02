@@ -41,7 +41,7 @@ function Footer() {
       method: "POST",
       body: JSON.stringify({
         messages,
-        current_style: css ?? extractCSS(),
+        current_style: css ?? extractCss(),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ function Footer() {
     }
   };
 
-  function extractCSS() {
+  function extractCss() {
     const stylesheets = document.styleSheets;
     let cssText = "";
 
@@ -88,9 +88,12 @@ function Footer() {
       if (firstItem && firstItem.cssText.startsWith(".fa")) {
         return; // skip font awsome CSS
       }
-      Array.from(stylesheet.cssRules).forEach((rule) => {
+      for (const rule of Array.from(stylesheet.cssRules)) {
+        if (rule.cssText.startsWith(".fa")) {
+          return; // for prod builds, font awesome is in the same style sheet
+        }
         cssText += `${rule.cssText} `;
-      });
+      }
     });
 
     return cssText.replace(/\n/g, " ");
