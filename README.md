@@ -10,6 +10,8 @@ Clara is an AI chat bot that responds in rhymes and can generate poems! When a p
 
 ## Try it out!
 
+For a live demo, visit [clara.holmes-software.com](https://clara.holmes-software.com/)! To run it locally, keep reading... 👀
+
 ### API Key
 To run this app locally, you will need an OpenAI API key with chat completion permissions.
 
