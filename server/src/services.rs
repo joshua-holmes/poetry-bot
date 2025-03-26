@@ -5,7 +5,7 @@ use crate::{
         self,
         schemas::{ChatBotRequest, ChatBotResponse},
     },
-    schemas::{ClaraRequest, ClaraResponse, Clerror},
+    types::{ClaraRequest, ClaraResponse, Clerror},
 };
 use reqwest::Client;
 

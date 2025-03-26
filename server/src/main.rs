@@ -12,10 +12,10 @@ use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod config;
 mod openai;
-mod schemas;
+mod types;
 mod services;
 
-use schemas::ClaraRequest;
+use types::ClaraRequest;
 use services::ask_clara;
 
 /// Selected port that the server will run on

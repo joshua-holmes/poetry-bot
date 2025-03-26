@@ -1,7 +1,7 @@
 use axum::http::{HeaderMap, HeaderValue};
 use std::sync::OnceLock;
 
-use crate::schemas::Clerror;
+use crate::types::Clerror;
 
 // ---------- CLARA CONFIG ----------
 pub const MODEL: &str = "gpt-4o";
@@ -88,7 +88,7 @@ pub mod urls {
 
 pub mod schemas {
     use super::*;
-    use crate::schemas::{ClaraRequest, Message};
+    use crate::types::{ClaraRequest, Message};
     use serde::{Deserialize, Serialize};
 
     // There are more properties on these types, but these are the ones we need.
