@@ -7,8 +7,12 @@ use log::info;
 
 const TARGET: &str = ".env";
 
-/// Reads through project root and server root dirs for .env files
-pub fn load_env_vars() {
+/// Reads through project root and server root dirs for .env files.
+///
+/// # Safety
+/// This function can set an OS env var, which is not safe if you cannot guarantee that another thread is not doing the
+/// same thing at the same time.
+pub unsafe fn load_env_vars() {
     for path in ["..", "."] {
         let entries = fs::read_dir(path)
             .unwrap_or_else(|e| panic!("Could not read directory '{}' because:\n{}", path, e));
@@ -20,14 +24,18 @@ pub fn load_env_vars() {
                 continue;
             };
             if fname == TARGET {
-                load_env_file(&path);
+                unsafe { load_env_file(&path) };
             }
         }
     }
 }
 
-/// Loads env vars from given file
-fn load_env_file(path: &PathBuf) {
+/// Loads env vars from given file.
+///
+/// # Safety
+/// This function can set an OS env var, which is not safe if you cannot guarantee that another thread is not doing the
+/// same thing at the same time.
+unsafe fn load_env_file(path: &PathBuf) {
     let content = fs::read_to_string(path)
         .unwrap_or_else(|e| panic!("Failed to read file '{:?}':\n{}", path, e));
 
@@ -45,7 +53,9 @@ fn load_env_file(path: &PathBuf) {
                 let key = key.trim().to_string().replace("'", "").replace("\"", "");
                 let value = value.trim().to_string().replace("'", "").replace("\"", "");
                 info!(".env -> {}", key);
-                env::set_var(key, value);
+                unsafe {
+                    env::set_var(key, value);
+                }
             }
         }
     }
@@ -75,7 +85,9 @@ mod tests {
         fs::write(path, "TEST_LOAD_ENV_FILE=success").unwrap();
         assert!(env::var(env_var).is_err());
 
-        load_env_file(&PathBuf::from(path));
+        unsafe {
+            load_env_file(&PathBuf::from(path));
+        }
 
         assert!(env::var(env_var).is_ok());
         assert_eq!(env::var(env_var).unwrap(), "success");
@@ -91,7 +103,9 @@ mod tests {
         fs::write(path, " #TEST_COMMENTS_ARE_IGNORED=success").unwrap();
         assert!(env::var(env_var).is_err());
 
-        load_env_file(&PathBuf::from(path));
+        unsafe {
+            load_env_file(&PathBuf::from(path));
+        }
 
         assert!(env::var(env_var).is_err());
 
@@ -106,7 +120,9 @@ mod tests {
         fs::write(path, "TEST_QUOTES_ARE_IGNORED='success'").unwrap();
         assert!(env::var(env_var).is_err());
 
-        load_env_file(&PathBuf::from(path));
+        unsafe {
+            load_env_file(&PathBuf::from(path));
+        }
 
         assert_eq!(env::var(env_var).unwrap(), "success");
 
@@ -119,7 +135,9 @@ mod tests {
 
         fs::write(path, "some weird text").unwrap();
 
-        load_env_file(&PathBuf::from(path));
+        unsafe {
+            load_env_file(&PathBuf::from(path));
+        }
 
         fs::remove_file(path).unwrap();
     }

@@ -1,7 +1,7 @@
 use axum::http::{HeaderMap, HeaderValue};
 use std::sync::OnceLock;
 
-use crate::types::Clerror;
+use crate::errors::Clerror;
 
 // ---------- CLARA CONFIG ----------
 pub const MODEL: &str = "gpt-4o";

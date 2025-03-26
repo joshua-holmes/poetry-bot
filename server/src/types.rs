@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::openai::schemas::ChatBotResponse;
+use crate::{errors::Clerror, openai::schemas::ChatBotResponse};
 
 // ---------- REQUEST TYPES ----------
 
@@ -38,23 +38,5 @@ impl TryFrom<ChatBotResponse> for ClaraResponse {
             // OpenAI's chat models are guaranteed to have at least one choice
             value.choices.pop().unwrap().message.content.as_str(),
         )?)
-    }
-}
-
-// ---------- ERROR TYPES ----------
-
-/// A Clara error! Yeah you're right, it's a bad name... General error type to send back to the client
-#[derive(Serialize, Debug)]
-pub struct Clerror {
-    pub error: String,
-}
-impl<T> From<T> for Clerror
-where
-    T: ToString,
-{
-    fn from(value: T) -> Self {
-        Self {
-            error: value.to_string(),
-        }
     }
 }

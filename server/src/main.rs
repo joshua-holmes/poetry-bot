@@ -11,12 +11,13 @@ use reqwest::Client;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod config;
+mod errors;
 mod openai;
-mod types;
 mod services;
+mod types;
 
-use types::ClaraRequest;
 use services::ask_clara;
+use types::ClaraRequest;
 
 /// Selected port that the server will run on
 const PORT: u16 = 49152;
@@ -32,7 +33,11 @@ async fn main() {
     env_logger::init();
 
     // load env vars from .env file
-    config::load_env_vars();
+    // SAFETY: This is run on the main thread a single time, so no safety concern with env vars being written while the
+    // same env var is being written/read on another thread.
+    unsafe {
+        config::load_env_vars();
+    }
 
     // set api key and token here, so the server fails fast if they are not right
     let openai_api_key = env::var(openai::API_KEY_ENV_VAR).unwrap_or_else(|_| {

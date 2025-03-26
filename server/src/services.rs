@@ -1,11 +1,12 @@
 use std::sync::Arc;
 
 use crate::{
+    errors::Clerror,
     openai::{
         self,
         schemas::{ChatBotRequest, ChatBotResponse},
     },
-    types::{ClaraRequest, ClaraResponse, Clerror},
+    types::{ClaraRequest, ClaraResponse},
 };
 use reqwest::Client;
 
