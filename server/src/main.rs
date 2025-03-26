@@ -10,11 +10,12 @@ use log::info;
 use reqwest::Client;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
-mod config;
-mod errors;
-mod openai;
+mod common;
 mod services;
-mod types;
+mod utils;
+
+use common::{errors, types};
+use utils::{config, openai};
 
 use services::ask_clara;
 use types::ClaraRequest;
