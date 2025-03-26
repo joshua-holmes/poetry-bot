@@ -1,24 +1,17 @@
 use std::{env, sync::Arc};
 
-use axum::{
-    http::{HeaderValue, StatusCode},
-    response::{IntoResponse, Response},
-    routing::{get, post},
-    Extension, Json, Router,
-};
+use axum::{http::HeaderValue, Extension};
 use log::info;
 use reqwest::Client;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod common;
+mod handlers;
 mod services;
 mod utils;
 
 use common::{errors, types};
 use utils::{config, openai};
-
-use services::ask_clara;
-use types::ClaraRequest;
 
 /// Selected port that the server will run on
 const PORT: u16 = 49152;
@@ -60,9 +53,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", PORT))
         .await
         .unwrap_or_else(|e| panic!("Axum failed to bind to port {}:\n{}", PORT, e));
-    let mut app = Router::new()
-        .route("/api", post(api))
-        .route("/ping", get(ping))
+    let mut app = handlers::build_router()
         .layer(cors)
         .layer(Extension(AppState { http_client }));
 
@@ -84,18 +75,4 @@ async fn main() {
     axum::serve(listener, app)
         .await
         .expect("Failed to start Axum server");
-}
-
-async fn api(
-    Extension(state): Extension<AppState>,
-    Json(payload): Json<ClaraRequest>,
-) -> (StatusCode, Response) {
-    match ask_clara(state.http_client, payload).await {
-        Ok(resp) => (StatusCode::OK, Json(resp).into_response()),
-        Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, Json(err).into_response()),
-    }
-}
-
-async fn ping() -> (StatusCode, &'static str) {
-    (StatusCode::OK, "Pong!")
 }
