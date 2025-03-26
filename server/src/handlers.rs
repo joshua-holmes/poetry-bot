@@ -5,7 +5,10 @@ use axum::{
     Extension, Json, Router,
 };
 
-use crate::{common::types::ClaraRequest, services::ask_clara, AppState};
+use crate::{
+    services::ask_clara,
+    types::{AppState, ClaraRequest},
+};
 
 pub fn build_router() -> Router {
     Router::new()

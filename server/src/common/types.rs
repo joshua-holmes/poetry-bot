@@ -1,6 +1,14 @@
+use std::sync::Arc;
+
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::{errors::Clerror, openai::schemas::ChatBotResponse};
+
+#[derive(Clone)]
+pub struct AppState {
+    pub http_client: Arc<Client>,
+}
 
 // ---------- REQUEST TYPES ----------
 

@@ -16,11 +16,6 @@ use utils::{config, openai};
 /// Selected port that the server will run on
 const PORT: u16 = 49152;
 
-#[derive(Clone)]
-pub struct AppState {
-    pub http_client: Arc<Client>,
-}
-
 #[tokio::main]
 async fn main() {
     // initialize logging
@@ -55,7 +50,7 @@ async fn main() {
         .unwrap_or_else(|e| panic!("Axum failed to bind to port {}:\n{}", PORT, e));
     let mut app = handlers::build_router()
         .layer(cors)
-        .layer(Extension(AppState { http_client }));
+        .layer(Extension(types::AppState { http_client }));
 
     // only serve frontend files in release mode
     if !cfg!(debug_assertions) {
