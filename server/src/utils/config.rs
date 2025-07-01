@@ -113,11 +113,28 @@ mod tests {
     }
 
     #[test]
-    fn test_quotes_are_ignored() {
-        let path = "./.test_quotes_are_ignored.env";
-        let env_var = "TEST_QUOTES_ARE_IGNORED";
+    fn test_single_quotes_are_ignored() {
+        let path = "./.test_single_quotes_are_ignored.env";
+        let env_var = "TEST_SINGLE_QUOTES_ARE_IGNORED";
 
-        fs::write(path, "TEST_QUOTES_ARE_IGNORED='success'").unwrap();
+        fs::write(path, "TEST_SINGLE_QUOTES_ARE_IGNORED='success'").unwrap();
+        assert!(env::var(env_var).is_err());
+
+        unsafe {
+            load_env_file(&PathBuf::from(path));
+        }
+
+        assert_eq!(env::var(env_var).unwrap(), "success");
+
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn test_double_quotes_are_ignored() {
+        let path = "./.test_double_quotes_are_ignored.env";
+        let env_var = "TEST_DOUBLE_QUOTES_ARE_IGNORED";
+
+        fs::write(path, "TEST_DOUBLE_QUOTES_ARE_IGNORED=\"success\"").unwrap();
         assert!(env::var(env_var).is_err());
 
         unsafe {
